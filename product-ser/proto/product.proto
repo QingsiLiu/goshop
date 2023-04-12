@@ -1,0 +1,28 @@
+syntax = "proto3";
+option go_package = "./;proto";
+package proto;
+
+message Product {
+  int32 id = 1;
+  string name = 2;
+  int32 startingPrice = 3;
+  string mainPicture = 4;
+  map<string, string> labelList = 5;
+  int32 singleBuyLimit = 6;
+  string token = 7;
+  bool isEnable = 8;
+  int32 productType = 9;
+}
+
+message PageReq {
+  int32 length = 1;
+  string pageIndex = 2;
+}
+
+message PageResp {
+  Product product = 1;
+}
+
+service Page {
+  rpc Page (PageReq) returns (PageResp){}
+}
