@@ -14,8 +14,9 @@ import (
 )
 
 const (
-	consulStr = "http://101.34.10.3:8500"
-	fileKey   = "mysql-user"
+	consulStr      = "http://101.34.10.3:8500"
+	consulReistStr = "101.34.10.3:8500"
+	fileKey        = "mysql-user"
 )
 
 func main() {
@@ -27,7 +28,7 @@ func main() {
 
 	// consul 注册中心
 	consulRegistry := consul.NewRegistry(func(options *registry.Options) {
-		options.Addrs = []string{consulStr}
+		options.Addrs = []string{consulReistStr}
 	})
 	rpcService := micro.NewService(
 		micro.RegisterTTL(time.Second*30),
@@ -48,7 +49,7 @@ func main() {
 	userDataService := service.NewUserDataService(repository.NewUserRepository(db))
 
 	// 注册handler
-	err = proto.RegisterLoginHandler(rpcService.Server(), &handler.User{UserDataService: userDataService})
+	err = proto.RegisterLoginHandler(rpcService.Server(), &handler.UserHandler{UserDataService: userDataService})
 	if err != nil {
 		log.Panicln("register handler error: ", err)
 	}

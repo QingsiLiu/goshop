@@ -16,11 +16,11 @@ message Product {
 
 message PageReq {
   int32 length = 1;
-  string pageIndex = 2;
+  int32 pageIndex = 2;
 }
 
 message PageResp {
-  Product product = 1;
+  repeated Product product = 1;
 }
 
 service Page {

@@ -10,22 +10,24 @@ import (
 	"user-ser/proto"
 )
 
-type User struct {
+type UserHandler struct {
 	UserDataService service.IUserDataService
 }
 
 // Login 注册登录
-func (u *User) Login(ctx context.Context, request *proto.LoginRequest, resp *proto.LoginResp) error {
-	userInfo, err := u.UserDataService.Login(request.ClientId, request.SystemId, request.Phone, request.VerificationCode)
+func (u *UserHandler) Login(ctx context.Context, request *proto.LoginRequest, resp *proto.LoginResp) error {
+	userInfo, err := u.UserDataService.Login(request.GetClientId(), request.GetSystemId(), request.GetPhone(), request.GetVerificationCode())
 	if err != nil {
 		return err
 	}
 	fmt.Println(">>>>>>>>>>>>> login success :", userInfo)
-	UserForResp(userInfo, resp)
+
+	userForResp(userInfo, resp)
+
 	return nil
 }
 
-func UserForResp(user *model.User, resp *proto.LoginResp) *proto.LoginResp {
+func userForResp(user *model.User, resp *proto.LoginResp) *proto.LoginResp {
 	timeStr := fmt.Sprintf("%d", time.Now().Unix())
 	resp.Token = common.Md5Encode(timeStr)
 
