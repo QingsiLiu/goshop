@@ -21,6 +21,8 @@ message PageReq {
 
 message PageResp {
   repeated Product product = 1;
+  int64 total = 2;
+  int64 rows = 3;
 }
 
 service Page {

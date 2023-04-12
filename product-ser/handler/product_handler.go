@@ -2,7 +2,6 @@ package handler
 
 import (
 	"context"
-	"fmt"
 	"github.com/pkg/errors"
 	"log"
 	"product-ser/common"
@@ -16,12 +15,15 @@ type ProductHandler struct {
 }
 
 func (p *ProductHandler) Page(ctx context.Context, request *proto.PageReq, response *proto.PageResp) error {
-	productInfo, err := p.ProductDataService.Page(request.GetLength(), request.GetPageIndex())
+	count, productInfo, err := p.ProductDataService.Page(request.GetLength(), request.GetPageIndex())
 	if err != nil {
 		return errors.Wrap(err, "page product error")
 	}
+	log.Println("count >>> ", count)
 	log.Println(">>>>>>>>> page product success: ", productInfo)
 
+	response.Rows = int64(request.GetLength())
+	response.Total = count
 	err = productForResp(productInfo, response)
 	if err != nil {
 		return err
@@ -37,7 +39,7 @@ func productForResp(products []*model.Product, resp *proto.PageResp) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(">>>>>>>>>>>>> ", product)
+		log.Println(">>>>>>>>>>>>> ", product)
 		resp.Product = append(resp.Product, product)
 	}
 	return nil

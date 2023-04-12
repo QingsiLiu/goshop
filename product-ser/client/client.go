@@ -46,7 +46,7 @@ func ProductPage(c *gin.Context) {
 		return
 	}
 
-	common.RespOK(c.Writer, "获得商品列表成功", resp)
+	common.RespListOK(c.Writer, "获得商品列表成功", resp, resp.Rows, resp.Total, "")
 }
 
 func main() {
