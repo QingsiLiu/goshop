@@ -10,9 +10,11 @@ import (
 	"product-ser/proto"
 )
 
-type ProductHandler struct {
-	ProductDataService service.IProductDataService
-}
+type (
+	ProductHandler struct {
+		ProductDataService service.IProductDataService
+	}
+)
 
 func (p *ProductHandler) Page(ctx context.Context, request *proto.PageReq, response *proto.PageResp) error {
 	count, productInfo, err := p.ProductDataService.Page(request.GetLength(), request.GetPageIndex())
@@ -43,4 +45,72 @@ func productForResp(products []*model.Product, resp *proto.PageResp) error {
 		resp.Product = append(resp.Product, product)
 	}
 	return nil
+}
+
+func (p *ProductHandler) ShowProductDetail(ctx context.Context, request *proto.ProductDetailReq, response *proto.ProductDetailResp) error {
+	obj, err := p.ProductDataService.ShowProductDetail(request.GetId())
+	if err != nil {
+		println("ShowProductDetail   err :", err)
+	}
+	productDetail := &proto.ProductDetail{}
+	err1 := common.SwapToStruct(obj, productDetail)
+	if err1 != nil {
+		println("ShowProductDetail SwapToStruct  err :", err1)
+	}
+	response.ProductDetail = append(response.ProductDetail, productDetail)
+	return nil
+}
+
+// ShowProductSku 商品SKU列表
+func (p *ProductHandler) ShowProductSku(ctx context.Context, req *proto.ProductSkuReq, resp *proto.ProductSkuResp) error {
+	//count := u.ProductDataService.CountNum()
+	obj, err := p.ProductDataService.ShowProductSku(req.GetProductId())
+	if err != nil {
+		println("ShowProductSku   err :", err)
+	}
+	err1 := ObjSkuForResp(obj, resp)
+	if err1 != nil {
+		println("ShowProductSku SwapToStruct  err :", err1)
+	}
+	return nil
+}
+
+func ObjSkuForResp(obj *[]model.ProductSku, resp *proto.ProductSkuResp) (err error) {
+	for _, v := range *obj {
+		productSku := &proto.ProductSku{}
+		err := common.SwapToStruct(v, productSku)
+		if err != nil {
+			return err
+		}
+		resp.ProductSku = append(resp.ProductSku, productSku)
+	}
+	return nil
+}
+
+// 商品SKU详情
+func (p *ProductHandler) ShowDetailSku(ctx context.Context, req *proto.ProductDetailReq, resp *proto.ProductSkuResp) error {
+	//count := u.ProductDataService.CountNum()
+	obj, err := p.ProductDataService.ShowDetailSku(req.Id)
+	if err != nil {
+		println("ShowDetailSku   err :", err)
+	}
+	productSku := &proto.ProductSku{}
+	err = common.SwapToStruct(obj, productSku)
+	if err != nil {
+		return err
+	}
+	resp.ProductSku = append(resp.ProductSku, productSku)
+	return nil
+}
+
+// 修改商品SKU
+func (p *ProductHandler) UpdateSku(ctx context.Context, req *proto.UpdateSkuReq, resp *proto.UpdateSkuResp) error {
+	//count := u.ProductDataService.CountNum()
+	isSuccess, err := p.ProductDataService.UpdateSku(req)
+	if err != nil {
+		resp.IsSuccess = isSuccess
+		println("UpdateSku   err :", err)
+	}
+	resp.IsSuccess = isSuccess
+	return err
 }

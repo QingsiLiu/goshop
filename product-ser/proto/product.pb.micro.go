@@ -85,3 +85,245 @@ type pageHandler struct {
 func (h *pageHandler) Page(ctx context.Context, in *PageReq, out *PageResp) error {
 	return h.PageHandler.Page(ctx, in, out)
 }
+
+// Api Endpoints for ShowProductDetail service
+
+func NewShowProductDetailEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for ShowProductDetail service
+
+type ShowProductDetailService interface {
+	// rpc 服务
+	ShowProductDetail(ctx context.Context, in *ProductDetailReq, opts ...client.CallOption) (*ProductDetailResp, error)
+}
+
+type showProductDetailService struct {
+	c    client.Client
+	name string
+}
+
+func NewShowProductDetailService(name string, c client.Client) ShowProductDetailService {
+	return &showProductDetailService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *showProductDetailService) ShowProductDetail(ctx context.Context, in *ProductDetailReq, opts ...client.CallOption) (*ProductDetailResp, error) {
+	req := c.c.NewRequest(c.name, "ShowProductDetail.ShowProductDetail", in)
+	out := new(ProductDetailResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for ShowProductDetail service
+
+type ShowProductDetailHandler interface {
+	// rpc 服务
+	ShowProductDetail(context.Context, *ProductDetailReq, *ProductDetailResp) error
+}
+
+func RegisterShowProductDetailHandler(s server.Server, hdlr ShowProductDetailHandler, opts ...server.HandlerOption) error {
+	type showProductDetail interface {
+		ShowProductDetail(ctx context.Context, in *ProductDetailReq, out *ProductDetailResp) error
+	}
+	type ShowProductDetail struct {
+		showProductDetail
+	}
+	h := &showProductDetailHandler{hdlr}
+	return s.Handle(s.NewHandler(&ShowProductDetail{h}, opts...))
+}
+
+type showProductDetailHandler struct {
+	ShowProductDetailHandler
+}
+
+func (h *showProductDetailHandler) ShowProductDetail(ctx context.Context, in *ProductDetailReq, out *ProductDetailResp) error {
+	return h.ShowProductDetailHandler.ShowProductDetail(ctx, in, out)
+}
+
+// Api Endpoints for ShowProductSku service
+
+func NewShowProductSkuEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for ShowProductSku service
+
+type ShowProductSkuService interface {
+	// rpc 服务
+	ShowProductSku(ctx context.Context, in *ProductSkuReq, opts ...client.CallOption) (*ProductSkuResp, error)
+}
+
+type showProductSkuService struct {
+	c    client.Client
+	name string
+}
+
+func NewShowProductSkuService(name string, c client.Client) ShowProductSkuService {
+	return &showProductSkuService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *showProductSkuService) ShowProductSku(ctx context.Context, in *ProductSkuReq, opts ...client.CallOption) (*ProductSkuResp, error) {
+	req := c.c.NewRequest(c.name, "ShowProductSku.ShowProductSku", in)
+	out := new(ProductSkuResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for ShowProductSku service
+
+type ShowProductSkuHandler interface {
+	// rpc 服务
+	ShowProductSku(context.Context, *ProductSkuReq, *ProductSkuResp) error
+}
+
+func RegisterShowProductSkuHandler(s server.Server, hdlr ShowProductSkuHandler, opts ...server.HandlerOption) error {
+	type showProductSku interface {
+		ShowProductSku(ctx context.Context, in *ProductSkuReq, out *ProductSkuResp) error
+	}
+	type ShowProductSku struct {
+		showProductSku
+	}
+	h := &showProductSkuHandler{hdlr}
+	return s.Handle(s.NewHandler(&ShowProductSku{h}, opts...))
+}
+
+type showProductSkuHandler struct {
+	ShowProductSkuHandler
+}
+
+func (h *showProductSkuHandler) ShowProductSku(ctx context.Context, in *ProductSkuReq, out *ProductSkuResp) error {
+	return h.ShowProductSkuHandler.ShowProductSku(ctx, in, out)
+}
+
+// Api Endpoints for ShowDetailSku service
+
+func NewShowDetailSkuEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for ShowDetailSku service
+
+type ShowDetailSkuService interface {
+	// rpc 服务
+	ShowDetailSku(ctx context.Context, in *ProductDetailReq, opts ...client.CallOption) (*ProductSkuResp, error)
+}
+
+type showDetailSkuService struct {
+	c    client.Client
+	name string
+}
+
+func NewShowDetailSkuService(name string, c client.Client) ShowDetailSkuService {
+	return &showDetailSkuService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *showDetailSkuService) ShowDetailSku(ctx context.Context, in *ProductDetailReq, opts ...client.CallOption) (*ProductSkuResp, error) {
+	req := c.c.NewRequest(c.name, "ShowDetailSku.ShowDetailSku", in)
+	out := new(ProductSkuResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for ShowDetailSku service
+
+type ShowDetailSkuHandler interface {
+	// rpc 服务
+	ShowDetailSku(context.Context, *ProductDetailReq, *ProductSkuResp) error
+}
+
+func RegisterShowDetailSkuHandler(s server.Server, hdlr ShowDetailSkuHandler, opts ...server.HandlerOption) error {
+	type showDetailSku interface {
+		ShowDetailSku(ctx context.Context, in *ProductDetailReq, out *ProductSkuResp) error
+	}
+	type ShowDetailSku struct {
+		showDetailSku
+	}
+	h := &showDetailSkuHandler{hdlr}
+	return s.Handle(s.NewHandler(&ShowDetailSku{h}, opts...))
+}
+
+type showDetailSkuHandler struct {
+	ShowDetailSkuHandler
+}
+
+func (h *showDetailSkuHandler) ShowDetailSku(ctx context.Context, in *ProductDetailReq, out *ProductSkuResp) error {
+	return h.ShowDetailSkuHandler.ShowDetailSku(ctx, in, out)
+}
+
+// Api Endpoints for UpdateSku service
+
+func NewUpdateSkuEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for UpdateSku service
+
+type UpdateSkuService interface {
+	UpdateSku(ctx context.Context, in *UpdateSkuReq, opts ...client.CallOption) (*UpdateSkuResp, error)
+}
+
+type updateSkuService struct {
+	c    client.Client
+	name string
+}
+
+func NewUpdateSkuService(name string, c client.Client) UpdateSkuService {
+	return &updateSkuService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *updateSkuService) UpdateSku(ctx context.Context, in *UpdateSkuReq, opts ...client.CallOption) (*UpdateSkuResp, error) {
+	req := c.c.NewRequest(c.name, "UpdateSku.UpdateSku", in)
+	out := new(UpdateSkuResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for UpdateSku service
+
+type UpdateSkuHandler interface {
+	UpdateSku(context.Context, *UpdateSkuReq, *UpdateSkuResp) error
+}
+
+func RegisterUpdateSkuHandler(s server.Server, hdlr UpdateSkuHandler, opts ...server.HandlerOption) error {
+	type updateSku interface {
+		UpdateSku(ctx context.Context, in *UpdateSkuReq, out *UpdateSkuResp) error
+	}
+	type UpdateSku struct {
+		updateSku
+	}
+	h := &updateSkuHandler{hdlr}
+	return s.Handle(s.NewHandler(&UpdateSku{h}, opts...))
+}
+
+type updateSkuHandler struct {
+	UpdateSkuHandler
+}
+
+func (h *updateSkuHandler) UpdateSku(ctx context.Context, in *UpdateSkuReq, out *UpdateSkuResp) error {
+	return h.UpdateSkuHandler.UpdateSku(ctx, in, out)
+}
