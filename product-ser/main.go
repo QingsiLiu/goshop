@@ -72,6 +72,11 @@ func main() {
 		log.Fatalln("register handler error: ", err)
 	}
 
+	err = proto.RegisterShowProductSkuHandler(rpcService.Server(), &handler.ProductHandler{ProductDataService: productDataService})
+	if err != nil {
+		log.Fatalln("register handler error: ", err)
+	}
+
 	// 启动服务
 	if err := rpcService.Run(); err != nil {
 		log.Fatalln("start user service error: ", err)

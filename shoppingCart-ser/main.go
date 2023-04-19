@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/go-micro/plugins/v4/registry/consul"
+	ratelimiter "github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber"
 	opentracing2 "github.com/go-micro/plugins/v4/wrapper/trace/opentracing"
 	"github.com/opentracing/opentracing-go"
 	"go-micro.dev/v4"
@@ -19,6 +20,7 @@ const (
 	consulStr      = "http://101.34.10.3:8500"
 	consulReistStr = "101.34.10.3:8500"
 	fileKey        = "mysql-product"
+	QPS            = 100
 )
 
 func main() {
@@ -46,10 +48,13 @@ func main() {
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*30),
 		micro.Name("shop-cart"),
-		micro.Address(":8082"),
+		micro.Address(":8083"),
 		micro.Version("v1"),
 		micro.Registry(consulReist),
+		// 链路追踪
 		micro.WrapHandler(opentracing2.NewHandlerWrapper(opentracing.GlobalTracer())),
+		// 限流
+		micro.WrapHandler(ratelimiter.NewHandlerWrapper(QPS)),
 	)
 
 	// 初始化DB
