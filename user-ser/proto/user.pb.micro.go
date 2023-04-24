@@ -85,3 +85,62 @@ type loginHandler struct {
 func (h *loginHandler) Login(ctx context.Context, in *LoginRequest, out *LoginResp) error {
 	return h.LoginHandler.Login(ctx, in, out)
 }
+
+// Api Endpoints for GetUserToken service
+
+func NewGetUserTokenEndpoints() []*api.Endpoint {
+	return []*api.Endpoint{}
+}
+
+// Client API for GetUserToken service
+
+type GetUserTokenService interface {
+	GetUserToken(ctx context.Context, in *TokenReq, opts ...client.CallOption) (*TokenResp, error)
+}
+
+type getUserTokenService struct {
+	c    client.Client
+	name string
+}
+
+func NewGetUserTokenService(name string, c client.Client) GetUserTokenService {
+	return &getUserTokenService{
+		c:    c,
+		name: name,
+	}
+}
+
+func (c *getUserTokenService) GetUserToken(ctx context.Context, in *TokenReq, opts ...client.CallOption) (*TokenResp, error) {
+	req := c.c.NewRequest(c.name, "GetUserToken.GetUserToken", in)
+	out := new(TokenResp)
+	err := c.c.Call(ctx, req, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// Server API for GetUserToken service
+
+type GetUserTokenHandler interface {
+	GetUserToken(context.Context, *TokenReq, *TokenResp) error
+}
+
+func RegisterGetUserTokenHandler(s server.Server, hdlr GetUserTokenHandler, opts ...server.HandlerOption) error {
+	type getUserToken interface {
+		GetUserToken(ctx context.Context, in *TokenReq, out *TokenResp) error
+	}
+	type GetUserToken struct {
+		getUserToken
+	}
+	h := &getUserTokenHandler{hdlr}
+	return s.Handle(s.NewHandler(&GetUserToken{h}, opts...))
+}
+
+type getUserTokenHandler struct {
+	GetUserTokenHandler
+}
+
+func (h *getUserTokenHandler) GetUserToken(ctx context.Context, in *TokenReq, out *TokenResp) error {
+	return h.GetUserTokenHandler.GetUserToken(ctx, in, out)
+}

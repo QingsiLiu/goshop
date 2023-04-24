@@ -3,16 +3,17 @@ package main
 import (
 	"common"
 	"github.com/go-micro/plugins/v4/registry/consul"
+	"github.com/go-micro/plugins/v4/wrapper/monitoring/prometheus"
 	ratelimiter "github.com/go-micro/plugins/v4/wrapper/ratelimiter/uber"
 	opentracing2 "github.com/go-micro/plugins/v4/wrapper/trace/opentracing"
 	"github.com/opentracing/opentracing-go"
 	"go-micro.dev/v4"
 	"go-micro.dev/v4/registry"
 	"log"
-	"shoppingCart-ser/domain/repository"
-	"shoppingCart-ser/domain/service"
-	"shoppingCart-ser/handler"
-	"shoppingCart-ser/proto"
+	"order-ser/domain/repository"
+	"order-ser/domain/service"
+	"order-ser/handler"
+	"order-ser/proto"
 	"time"
 )
 
@@ -36,7 +37,7 @@ func main() {
 	})
 
 	//链路追踪实例化
-	trancer, io, err := common.NewTraner("shop-cart", "101.34.10.3:6831")
+	trancer, io, err := common.NewTraner("shop-order", "101.34.10.3:6831")
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -44,17 +45,22 @@ func main() {
 	// 设置全局的 tracing
 	opentracing.SetGlobalTracer(trancer)
 
+	// 开始监控 Prometheus
+	common.PrometheusBoot(9092)
+
 	rpcService := micro.NewService(
 		micro.RegisterTTL(time.Second*30),
 		micro.RegisterInterval(time.Second*30),
-		micro.Name("shop-cart"),
-		micro.Address(":8083"),
+		micro.Name("shop-order"),
+		micro.Address(":8084"),
 		micro.Version("v1"),
 		micro.Registry(consulReist),
 		// 链路追踪
 		micro.WrapHandler(opentracing2.NewHandlerWrapper(opentracing.GlobalTracer())),
 		// 限流
 		micro.WrapHandler(ratelimiter.NewHandlerWrapper(QPS)),
+		// 添加监控
+		micro.WrapHandler(prometheus.NewHandlerWrapper()),
 	)
 
 	// 初始化DB
@@ -64,22 +70,18 @@ func main() {
 	}
 
 	// 创建服务实例
-	cartService := service.NewCartService(repository.NewCartRepository(db))
+	orderService := service.NewOrderService(repository.NewOrderRepository(db))
 
 	// 注册handler
-	err = proto.RegisterAddCartHandler(rpcService.Server(), &handler.CartHandler{CartService: cartService})
+	err = proto.RegisterFindOrderHandler(rpcService.Server(), &handler.OrderHandler{OrderService: orderService})
 	if err != nil {
 		log.Fatalln("register handler error: ", err)
 	}
-	err = proto.RegisterUpdateCartHandler(rpcService.Server(), &handler.CartHandler{CartService: cartService})
+	err = proto.RegisterAddTradeOrderHandler(rpcService.Server(), &handler.OrderHandler{OrderService: orderService})
 	if err != nil {
 		log.Fatalln("register handler error: ", err)
 	}
-	err = proto.RegisterGetOrderTotalHandler(rpcService.Server(), &handler.CartHandler{CartService: cartService})
-	if err != nil {
-		log.Fatalln("register handler error: ", err)
-	}
-	err = proto.RegisterFindCartHandler(rpcService.Server(), &handler.CartHandler{CartService: cartService})
+	err = proto.RegisterUpdateTradeOrderHandler(rpcService.Server(), &handler.OrderHandler{OrderService: orderService})
 	if err != nil {
 		log.Fatalln("register handler error: ", err)
 	}

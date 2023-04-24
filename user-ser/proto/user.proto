@@ -31,3 +31,17 @@ message LoginResp {
 service Login {
   rpc Login (LoginRequest) returns (LoginResp){}
 }
+
+// 获取分布式token
+message TokenReq {
+  string uuid = 1;
+}
+
+message TokenResp {
+  string token = 1;
+  bool isLogin = 2;
+}
+
+service GetUserToken {
+  rpc GetUserToken(TokenReq) returns (TokenResp){}
+}

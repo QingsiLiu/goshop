@@ -1,7 +1,9 @@
 package common
 
 import (
+	"context"
 	"fmt"
+	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -49,4 +51,37 @@ func GetMysqlFromConsul(vip *viper.Viper) (db *gorm.DB, err error) {
 	}
 
 	return db, nil
+}
+
+// 获取redis配置
+func GetRedisFromConsul(vip *viper.Viper) (red *redis.Client, err error) {
+	red = redis.NewClient(&redis.Options{
+		Addr:         vip.GetString("addr"),
+		Password:     vip.GetString("password"),
+		DB:           vip.GetInt("DB"),
+		PoolSize:     vip.GetInt("poolSize"),
+		MinIdleConns: vip.GetInt("minIdleConn"),
+	})
+
+	// 集群client
+	cluterClients := redis.NewClusterClient(&redis.ClusterOptions{
+		Addrs: []string{},
+	})
+	fmt.Println(cluterClients)
+
+	return
+}
+
+// 设置用户token
+func SetUserToken(red *redis.Client, key string, val []byte, timeTTL time.Duration) {
+	red.Set(context.Background(), key, val, timeTTL)
+}
+
+// 获取用户token
+func GetUserToken(red *redis.Client, key string) (string, error) {
+	res, err := red.Get(context.Background(), key).Result()
+	if err != nil {
+		log.Printf("get user token from redis error: %v", err)
+	}
+	return res, nil
 }

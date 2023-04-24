@@ -1,0 +1,75 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    restart: always
+
+  consul:
+    image: consul:1.6.1
+    ports:
+      - "8500:8500"
+    restart: always
+
+  # 事务回滚
+  dtm:
+    image: yedf/dtm:latest
+    ports:
+      - "36789:36789/tcp"
+      - "36790:36790/tcp"
+    restart: always
+
+  # 熔断 负载均衡
+  hystrix:
+    image: mlabouardy/hystrix-dashboard:latest
+    ports:
+      - "8888:9002"
+    restart: always
+
+  # 链路追踪
+  jaegertracing:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "5775:5775/udp"
+      - "6831:6831/udp"
+      - "6832:6832/udp"
+      - "5778:5778/tcp"
+      - "9411:9411/tcp"
+      - "14268:14268/tcp"
+    restart: always
+
+  # 普罗米修斯
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - "9090:9090"
+
+  grafana:
+    image: /grafana/grafana:latest
+    ports:
+      - "3000:3000"
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

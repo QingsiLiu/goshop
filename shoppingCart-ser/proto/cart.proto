@@ -186,8 +186,33 @@ service UpdateSku {
   rpc UpdateSku (UpdateSkuReq) returns (UpdateSkuResp){}
 }
 
+// 获取分布式token
+message TokenReq {
+  string uuid = 1;
+}
 
+message TokenResp {
+  string token = 1;
+  bool isLogin = 2;
+}
 
+service GetUserToken {
+  rpc GetUserToken(TokenReq) returns (TokenResp){}
+}
+
+//  计算订单价格 请求
+message OrderTotalReq {
+  repeated int32 cartIds = 1;
+}
+//计算订单价格 响应
+message OrderTotalResp{
+  float totalPrice = 1;
+}
+//RPC 计算订单价格 服务 接口
+service GetOrderTotal {
+  //rpc 服务
+  rpc GetOrderTotal (OrderTotalReq) returns (OrderTotalResp){}
+}
 
 
 
