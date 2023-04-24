@@ -1,12 +1,12 @@
 package main
 
 import (
+    "common"
     "github.com/go-micro/plugins/v4/registry/consul"
     "go-micro.dev/v4"
     "go-micro.dev/v4/registry"
     "log"
     "time"
-    "user-ser/common"
     "user-ser/domain/repository"
     "user-ser/domain/service"
     "user-ser/handler"
